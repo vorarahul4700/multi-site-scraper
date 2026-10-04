@@ -1,0 +1,8 @@
+# Enforce Unix LF line endings for shell scripts deployed to Linux containers
+*.sh text eol=lf
+Dockerfile text eol=lf
+Procfile text eol=lf
+
+# Windows CRLF for Windows-only files
+*.bat text eol=crlf
+*.ps1 text eol=crlf

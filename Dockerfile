@@ -21,11 +21,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application files
 COPY . .
 
-# Make entrypoint executable
-RUN chmod +x start.sh
-
 # Expose default port for local dev (Railway overrides with $PORT)
 EXPOSE 5050
 
-# Use shell script so $PORT is evaluated at runtime, not build time
-CMD ["sh", "start.sh"]
+# Shell form (no JSON array) — Docker runs this via /bin/sh -c, so $PORT expands correctly at runtime
+CMD gunicorn dashboard.app:app --bind 0.0.0.0:${PORT:-5050} --workers 2 --threads 4 --timeout 120
