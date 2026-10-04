@@ -21,6 +21,7 @@ scripts/ingest_github_artifacts.py
 scripts/ingest_github_artifacts_fast.py
 scripts/init_dashboard_db.py
 skills-lock.json
-test/
-utils/
 temp/
+chrome_profile/
+*.mp3
+*.wav
