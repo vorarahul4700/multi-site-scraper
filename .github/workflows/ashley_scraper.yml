@@ -1,4 +1,4 @@
-name: Ashley Furniture Parallel Product Scraper
+name: Ashley Furniture
 
 on:
   workflow_dispatch:
@@ -484,6 +484,38 @@ jobs:
           name: ${{ steps.meta.outputs.timestamped_name }}
           path: ashley_products_full.csv
           retention-days: 7
+      - name: Sync to PostgreSQL (Railway Database)
+        if: always()
+        continue-on-error: true
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PGHOST: ${{ secrets.PGHOST || secrets.PG_HOST }}
+          PGPORT: ${{ secrets.PGPORT || secrets.PG_PORT }}
+          PGUSER: ${{ secrets.PGUSER || secrets.PG_USER }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD || secrets.PG_PASS }}
+          PGDATABASE: ${{ secrets.PGDATABASE || secrets.PG_DB }}
+        run: |
+          if [ -n "$DATABASE_URL" ] || [ -n "$PGHOST" ]; then
+            echo "Installing PostgreSQL dependencies..."
+            python -m pip install --quiet psycopg2-binary
+            CSV_FILE=""
+            for f in "${{ steps.meta.outputs.name }}" *products_full.csv *_full.csv *.csv; do
+              if [ -f "$f" ] && [[ "$f" != *"failure"* ]] && [[ "$f" != *"urls"* ]]; then
+                CSV_FILE="$f"
+                break
+              fi
+            done
+            if [ -n "$CSV_FILE" ] && [ -f "$CSV_FILE" ]; then
+              echo "Ingesting $CSV_FILE into PostgreSQL..."
+              python sync_to_postgres.py --csv "$CSV_FILE"
+            else
+              echo "No merged CSV output found to sync."
+            fi
+          else
+            echo "PostgreSQL not configured (DATABASE_URL / PGHOST). Skipping database sync."
+          fi
+
+
           
       - name: Upload to FTP server
         if: success()

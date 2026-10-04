@@ -1,4 +1,4 @@
-name: Cleanup GitHub Logs & Artifacts
+name: GitHub Actions Cleanup
 
 on:
   schedule:

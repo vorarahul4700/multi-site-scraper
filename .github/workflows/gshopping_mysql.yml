@@ -1,4 +1,4 @@
-name: Google Shopping Scraper (MySQL Flow)
+name: Google Shopping
 
 on:
   workflow_dispatch:
