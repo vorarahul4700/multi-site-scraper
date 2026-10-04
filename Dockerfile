@@ -1,10 +1,9 @@
 # Multi-stage production container for Railway.com
 FROM python:3.11-slim
 
-# Set environment
+# Set environment — do NOT set PORT here; Railway injects it at runtime
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PORT=5050
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
@@ -22,8 +21,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application files
 COPY . .
 
-# Expose port (overridden dynamically by Railway $PORT)
+# Make entrypoint executable
+RUN chmod +x start.sh
+
+# Expose default port for local dev (Railway overrides with $PORT)
 EXPOSE 5050
 
-# Launch with Gunicorn
-CMD ["sh", "-c", "gunicorn dashboard.app:app --bind 0.0.0.0:${PORT:-5050} --workers 2 --threads 4 --timeout 120"]
+# Use shell script so $PORT is evaluated at runtime, not build time
+CMD ["sh", "start.sh"]
