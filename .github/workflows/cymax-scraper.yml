@@ -185,6 +185,7 @@ jobs:
       - name: Checkout repository (for sync_to_postgres.py)
         uses: actions/checkout@v4
         with:
+          clean: false
           sparse-checkout: |
             sync_to_postgres.py
           sparse-checkout-cone-mode: false
