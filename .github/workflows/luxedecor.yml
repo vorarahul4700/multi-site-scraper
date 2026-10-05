@@ -208,7 +208,7 @@ jobs:
       - name: Checkout repository (for sync_to_postgres.py)
         uses: actions/checkout@v4
         with:
-          clean: false
+          path: _repo
           sparse-checkout: |
             sync_to_postgres.py
           sparse-checkout-cone-mode: false
@@ -227,6 +227,9 @@ jobs:
           if [ -n "$DATABASE_URL" ] || [ -n "$PGHOST" ]; then
             echo "Installing PostgreSQL dependencies..."
             python -m pip install --quiet psycopg2-binary
+            if [ -f "_repo/sync_to_postgres.py" ]; then
+              cp _repo/sync_to_postgres.py .
+            fi
             CSV_FILE=""
             for f in "${{ steps.meta.outputs.name }}" *products_full.csv *_full.csv *.csv; do
               if [ -f "$f" ] && [[ "$f" != *"failure"* ]] && [[ "$f" != *"urls"* ]]; then
