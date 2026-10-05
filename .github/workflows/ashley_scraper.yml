@@ -484,6 +484,13 @@ jobs:
           name: ${{ steps.meta.outputs.timestamped_name }}
           path: ashley_products_full.csv
           retention-days: 7
+      - name: Checkout repository (for sync_to_postgres.py)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            sync_to_postgres.py
+          sparse-checkout-cone-mode: false
+
       - name: Sync to PostgreSQL (Railway Database)
         if: always()
         continue-on-error: true

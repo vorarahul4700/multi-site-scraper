@@ -207,6 +207,13 @@ jobs:
           FILENAME="${SITE_NAME}_${DATE}.csv"
           echo "name=$FILENAME" >> $GITHUB_OUTPUT
           echo "Output filename: $FILENAME"
+      - name: Checkout repository (for sync_to_postgres.py)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            sync_to_postgres.py
+          sparse-checkout-cone-mode: false
+
       - name: Sync to PostgreSQL (Railway Database)
         if: always()
         continue-on-error: true

@@ -410,6 +410,13 @@ jobs:
           echo "Chunk files:      ${{ steps.merge.outputs.file_count || '0' }}"
           echo "Merged rows:      ${{ steps.merge.outputs.final_rows || '0' }}"
           echo "========================================="
+      - name: Checkout repository (for sync_to_postgres.py)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            sync_to_postgres.py
+          sparse-checkout-cone-mode: false
+
       - name: Sync to PostgreSQL (Railway Database)
         if: always()
         continue-on-error: true

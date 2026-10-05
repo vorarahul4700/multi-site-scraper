@@ -201,6 +201,13 @@ jobs:
           DATE=$(date +%F_%H%M%S)
           echo "name=${SITE_NAME}_${DATE}.csv" >> $GITHUB_OUTPUT
           echo "Generated filename: ${SITE_NAME}_${DATE}.csv"
+      - name: Checkout repository (for sync_to_postgres.py)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            sync_to_postgres.py
+          sparse-checkout-cone-mode: false
+
       - name: Sync to PostgreSQL (Railway Database)
         if: always()
         continue-on-error: true
